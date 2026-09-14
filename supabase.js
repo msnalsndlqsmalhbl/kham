@@ -7,7 +7,7 @@
 
 /* ─────────────── إعداد الاتصال ─────────────── */
 const SUPABASE_URL = 'https://vndevmxlmromhlnrafik.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZuZGV2bXhsbXJvbWhsbnJhZmlrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4OTQwMzE2MSwiZXhwIjoyMTA0OTc5MTYxfQ.cJn3bv5_Z3b1L7gniyH27nAa_-BgGM4eVU7l7eq_KL0';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZuZGV2bXhsbXJvbWhsbnJhZmlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MDMxNjEsImV4cCI6MjEwNDk3OTE2MX0.Cj6DUVQemWdnnMfOn32uGHluH0VwQD7ufH15XPT3Lgs';
 
 let sb = null;
 try {
