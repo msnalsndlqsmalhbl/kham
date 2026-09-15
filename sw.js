@@ -1,8 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════
-   Service Worker - محسّن للسرعة
+   Service Worker - قسم المواد الخام - مصنع الصندل
+   الإصدار: kham-v1.0.0
    ═══════════════════════════════════════════════════════════════ */
 
-const CACHE_VERSION = 'sandal-rope-v2.0.0';
+const CACHE_VERSION = 'kham-v1.0.0';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 const FONTS_CACHE = `${CACHE_VERSION}-fonts`;
@@ -22,14 +23,13 @@ const PRECACHE_URLS = [
   './offline.html'
 ];
 
-/* ─────────── التثبيت: خزّن كل شيء مرة واحدة ─────────── */
+/* ─────────── التثبيت ─────────── */
 self.addEventListener('install', (event) => {
-  console.log('📦 SW: تثبيت...');
+  console.log('📦 SW [Kham]: تثبيت...');
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then((cache) => {
-        console.log('📦 SW: تخزين الملفات الأساسية...');
-        // تخزين متوازي (أسرع)
+        console.log('📦 SW [Kham]: تخزين الملفات الأساسية...');
         return Promise.all(
           PRECACHE_URLS.map(url => 
             cache.add(new Request(url, { cache: 'reload' }))
@@ -38,38 +38,40 @@ self.addEventListener('install', (event) => {
         );
       })
       .then(() => {
-        console.log('✅ SW: التثبيت نجح');
+        console.log('✅ SW [Kham]: التثبيت نجح');
         return self.skipWaiting();
       })
   );
 });
 
-/* ─────────── التفعيل: احذف القديم ─────────── */
+/* ─────────── التفعيل ─────────── */
 self.addEventListener('activate', (event) => {
-  console.log('🚀 SW: تفعيل...');
+  console.log('🚀 SW [Kham]: تفعيل...');
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
         return Promise.all(
           cacheNames
-            .filter(name => name.startsWith('sandal-rope-') && 
+            .filter(name => 
+              name.startsWith('kham-') && 
               name !== STATIC_CACHE && 
               name !== RUNTIME_CACHE && 
-              name !== FONTS_CACHE)
+              name !== FONTS_CACHE
+            )
             .map(name => {
-              console.log('🗑️ SW: حذف cache قديم:', name);
+              console.log('🗑️ SW [Kham]: حذف cache قديم:', name);
               return caches.delete(name);
             })
         );
       })
       .then(() => {
-        console.log('✅ SW: التفعيل نجح');
+        console.log('✅ SW [Kham]: التفعيل نجح');
         return self.clients.claim();
       })
   );
 });
 
-/* ─────────── Fetch: Cache First للأساسيات ─────────── */
+/* ─────────── Fetch ─────────── */
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
@@ -84,7 +86,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // ✅ خطوط Google: Cache First (نادرة التغيير)
+  // ✅ خطوط Google: Cache First
   if (url.hostname.includes('fonts.googleapis.com') || 
       url.hostname.includes('fonts.gstatic.com')) {
     event.respondWith(
@@ -121,12 +123,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // ✅ الملفات المحلية: Cache First (الأسرع)
+  // ✅ الملفات المحلية: Cache First
   event.respondWith(
     caches.match(request).then((cached) => {
-      // إذا موجود → أعده فوراً (0ms)
       if (cached) {
-        // ✅ حدّث في الخلفية بدون انتظار
         fetch(request).then((response) => {
           if (response && response.status === 200) {
             caches.open(STATIC_CACHE).then((cache) => {
@@ -134,11 +134,9 @@ self.addEventListener('fetch', (event) => {
             });
           }
         }).catch(() => {});
-        
         return cached;
       }
 
-      // غير موجود → جلبه من الشبكة
       return fetch(request).then((response) => {
         if (response && response.status === 200) {
           const clone = response.clone();
@@ -164,10 +162,9 @@ self.addEventListener('message', (event) => {
   }
   if (event.data === 'CLEAR_CACHE') {
     caches.keys().then(names => {
-      names.forEach(name => caches.delete(name));
+      names.filter(n => n.startsWith('kham-')).forEach(name => caches.delete(name));
     });
   }
-  // ✅ تسريع: طلب تحميل كل الملفات مسبقاً
   if (event.data === 'PRELOAD_ALL') {
     caches.open(STATIC_CACHE).then(cache => {
       PRECACHE_URLS.forEach(url => {
