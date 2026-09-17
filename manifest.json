@@ -1,9 +1,62 @@
 {
   "name": "نظام قسم المواد الخام - مصنع الصندل",
   "short_name": "قسم المواد الخام",
+  "description": "نظام إدارة متكامل لقسم المواد الخام - مصنع الصندل للأوعية البلاستيكية",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#0f172a",
-  "theme_color": "#1e3a8a"
+  "theme_color": "#1e3a8a",
+  "orientation": "any",
+  "dir": "rtl",
+  "lang": "ar-SA",
+  "icons": [
+    {
+      "src": "favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "المبيعات",
+      "url": "./index.html#sales"
+    },
+    {
+      "name": "المخزن",
+      "url": "./index.html#warehouse"
+    },
+    {
+      "name": "التقارير",
+      "url": "./index.html#reports"
+    }
+  ]
 }
