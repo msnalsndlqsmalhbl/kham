@@ -1,14 +1,13 @@
 /* ═══════════════════════════════════════════════════════════════
-   Service Worker - قسم المواد الخام - مصنع الصندل
-   الإصدار: kham-v1.0.0
+   Service Worker - قسم الحبل - مصنع الصندل
+   الإصدار: sandal-rope-v2.0.1
    ═══════════════════════════════════════════════════════════════ */
 
-const CACHE_VERSION = 'kham-v1.0.0';
+const CACHE_VERSION = 'sandal-rope-v2.0.1';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 const FONTS_CACHE = `${CACHE_VERSION}-fonts`;
 
-// الملفات الأساسية
 const PRECACHE_URLS = [
   './',
   './index.html',
@@ -20,16 +19,16 @@ const PRECACHE_URLS = [
   './advanced.js',
   './reports.js',
   './manifest.json',
-  './offline.html'
+  './offline.html',
+  './assets/logo.png'
 ];
 
-/* ─────────── التثبيت ─────────── */
 self.addEventListener('install', (event) => {
-  console.log('📦 SW [Kham]: تثبيت...');
+  console.log('📦 SW [Rope]: تثبيت...');
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then((cache) => {
-        console.log('📦 SW [Kham]: تخزين الملفات الأساسية...');
+        console.log('📦 SW [Rope]: تخزين الملفات الأساسية...');
         return Promise.all(
           PRECACHE_URLS.map(url => 
             cache.add(new Request(url, { cache: 'reload' }))
@@ -38,55 +37,45 @@ self.addEventListener('install', (event) => {
         );
       })
       .then(() => {
-        console.log('✅ SW [Kham]: التثبيت نجح');
+        console.log('✅ SW [Rope]: التثبيت نجح');
         return self.skipWaiting();
       })
   );
 });
 
-/* ─────────── التفعيل ─────────── */
 self.addEventListener('activate', (event) => {
-  console.log('🚀 SW [Kham]: تفعيل...');
+  console.log('🚀 SW [Rope]: تفعيل...');
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
         return Promise.all(
           cacheNames
             .filter(name => 
-              name.startsWith('kham-') && 
+              name.startsWith('sandal-rope-') && 
               name !== STATIC_CACHE && 
               name !== RUNTIME_CACHE && 
               name !== FONTS_CACHE
             )
             .map(name => {
-              console.log('🗑️ SW [Kham]: حذف cache قديم:', name);
+              console.log('🗑️ SW [Rope]: حذف cache قديم:', name);
               return caches.delete(name);
             })
         );
       })
       .then(() => {
-        console.log('✅ SW [Kham]: التفعيل نجح');
+        console.log('✅ SW [Rope]: التفعيل نجح');
         return self.clients.claim();
       })
   );
 });
 
-/* ─────────── Fetch ─────────── */
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // ❌ تجاهل: Supabase (يحتاج شبكة)
-  if (url.hostname.includes('supabase.co')) {
-    return;
-  }
+  if (url.hostname.includes('supabase.co')) return;
+  if (request.method !== 'GET') return;
 
-  // ❌ تجاهل: طلبات POST/PUT/DELETE
-  if (request.method !== 'GET') {
-    return;
-  }
-
-  // ✅ خطوط Google: Cache First
   if (url.hostname.includes('fonts.googleapis.com') || 
       url.hostname.includes('fonts.gstatic.com')) {
     event.respondWith(
@@ -105,7 +94,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // ✅ JS SDK من CDN: Cache First
   if (url.hostname.includes('jsdelivr.net') || url.hostname.includes('unpkg.com')) {
     event.respondWith(
       caches.open(RUNTIME_CACHE).then(cache => {
@@ -123,7 +111,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // ✅ الملفات المحلية: Cache First
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) {
@@ -155,14 +142,11 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-/* ─────────── رسائل من الصفحة ─────────── */
 self.addEventListener('message', (event) => {
-  if (event.data === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
+  if (event.data === 'SKIP_WAITING') self.skipWaiting();
   if (event.data === 'CLEAR_CACHE') {
     caches.keys().then(names => {
-      names.filter(n => n.startsWith('kham-')).forEach(name => caches.delete(name));
+      names.filter(n => n.startsWith('sandal-rope-')).forEach(name => caches.delete(name));
     });
   }
   if (event.data === 'PRELOAD_ALL') {
